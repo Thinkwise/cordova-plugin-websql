@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{03DA7CC6-98FE-4425-9100-5D3C51C3A9A2}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>winmdobj</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SQLitePluginNative</RootNamespace>
     <AssemblyName>SQLitePluginNative</AssemblyName>
@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_PHONE_APP</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,11 +34,11 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
-    <SDKReference Include="Microsoft.VCLibs, version=12.0">
-      <Name>Microsoft Visual C++ 2013 Runtime Package for Windows Phone</Name>
-    </SDKReference>
     <SDKReference Include="SQLite.WP81, Version=3.8.8.1">
       <Name>SQLite for Windows Phone 8.1</Name>
     </SDKReference>
@@ -45,6 +46,12 @@
   <ItemGroup>
     <Compile Include="SQLiteProxy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SQLite\SQLiteException.cs" />
+    <Compile Include="SQLite\SQLite3.cs" />
+    <Compile Include="SQLite\SQLiteCommand.cs" />
+    <Compile Include="SQLite\SQLiteConnection.cs" />
+    <Compile Include="SQLite\SQLiteOpenFlags.cs" />
+    <Compile Include="SQLite\TableMapping.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
