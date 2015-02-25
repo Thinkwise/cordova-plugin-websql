@@ -52,6 +52,7 @@
     <Compile Include="SQLite\SQLiteCommand.cs" />
     <Compile Include="SQLite\SQLiteConnection.cs" />
     <Compile Include="SQLite\SQLiteOpenFlags.cs" />
+    <Compile Include="SQLite\SQLiteTypeConverter.cs" />
     <Compile Include="SQLite\TableMapping.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />

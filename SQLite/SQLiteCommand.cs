@@ -75,15 +75,21 @@ namespace SQLitePluginNative.SQLite
             {
 
                 var cols = new TableMapping.Column[SQLite3.ColumnCount(stmt)];
-
-                for (int i = 0; i < cols.Length; i++)
+                // We have a valid row, get the correct datatypes and columns
+                if (SQLite3.Step(stmt) == SQLite3.Result.Row)
                 {
-                    var name = SQLite3.ColumnName16(stmt, i);
-                    //TODO (DvdB): FIXME
-                    cols[i] = new TableMapping.Column(name, typeof(String));
+                    for (int i = 0; i < cols.Length; i++)
+                    {
+                        var name = SQLite3.ColumnName16(stmt, i);
+                        cols[i] = new TableMapping.Column(name, SQLiteTypeConverter.convertTypeToCLRType(SQLite3.ColumnType(stmt, i)));
+                    }
+                }
+                else
+                {
+                    yield break;
                 }
 
-                while (SQLite3.Step(stmt) == SQLite3.Result.Row)
+                do
                 {
                     IDictionary<string, object> obj = new Dictionary<string, object>();
                     for (int i = 0; i < cols.Length; i++)
@@ -95,7 +101,7 @@ namespace SQLitePluginNative.SQLite
                         cols[i].SetValue(obj, val);
                     }
                     yield return (T)obj;
-                }
+                } while (SQLite3.Step(stmt) == SQLite3.Result.Row);
             }
             finally
             {
