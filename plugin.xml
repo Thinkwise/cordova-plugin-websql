@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) Microsoft Open Technologies, Inc.  All Rights Reserved. 
+ Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+-->
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+xmlns:android="http://schemas.android.com/apk/res/android"
+           id="com.thinkwisesoftware.websql"
+      version="1.0">
+    <name>Web SQL plugin</name>
+
+    <description>Web Sql Plugin for Apache Cordova (based on com.msopentech.websql)</description>
+    <keywords>cordova, websql, db, database</keywords>
+
+    <platform name="windows">  
+        <js-module src="www/WebSQL.js" name="WebSQL">
+            <merges target="window" />
+        </js-module>
+        <js-module src="www/windows/Database.js" name="Database" />
+        <js-module src="www/windows/SqlTransaction.js" name="SqlTransaction" />
+
+        <!--<lib-file Include="Microsoft.VCLibs, Version=12.0" />
+        <lib-file Include="SQLite.WP81, Version=3.8.8.1" />-->
+
+        <js-module src="src/windows/WebSqlProxy.js" name="WebSqlProxy">
+            <runs />
+        </js-module>
+    </platform>
+</plugin>
