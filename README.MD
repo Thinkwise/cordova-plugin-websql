@@ -39,3 +39,10 @@ After that, add this to the jsproj:
 It is important to do this right below the (last) import statement 
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
 
+
+# Build
+
+Note: the extra dashes are important because of a bug in cordova
+
+cordova build windows --archs="x86 arm" -- --phone 
+cordova build windows -- --win

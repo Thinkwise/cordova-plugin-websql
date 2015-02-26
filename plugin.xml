@@ -13,9 +13,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
     <keywords>cordova, websql, db, database</keywords>
 
     <platform name="windows">  
-        <js-module src="www/WebSQL.js" name="WebSQL">
-            <merges target="window" />
-        </js-module>
+        <js-module src="www/WebSQL.js" name="WebSQL" />
         <js-module src="www/windows/Database.js" name="Database" />
         <js-module src="www/windows/SqlTransaction.js" name="SqlTransaction" />
 
