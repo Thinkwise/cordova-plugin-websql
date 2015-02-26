@@ -1,5 +1,4 @@
-﻿/*
- * Copyright (c) Microsoft Open Technologies, Inc. All Rights Reserved.
+﻿ * Copyright (c) Microsoft Open Technologies, Inc. All Rights Reserved.
  * Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
  */
 var exec = require('cordova/exec'),
@@ -36,7 +35,7 @@ Database.prototype.Log = function (text) {
         console.log('[Database] name: ' + this.name + ', lastTransactionId: ' + this.lastTransactionId + '. | ' + text);
 };
 
-Database.prototype.transaction = function (cb, onError, onSuccess, preflight, postflight, readOnly, parentTransaction) {
+Database.prototype.transaction = function (cb, onError, onSuccess, readOnly) {
     this.Log('transaction');
 
     if (typeof cb !== "function") {
@@ -49,74 +48,57 @@ Database.prototype.transaction = function (cb, onError, onSuccess, preflight, po
     }
 
     var me = this;
-    var isRoot = (Boolean)(!parentTransaction);
     this.lastTransactionId++;
 
-    var runTransaction = function() {
+    var runTransaction = function () {
         var tx = new SqlTransaction(readOnly);
         tx.id = me.lastTransactionId;
         try {
-            if (isRoot) {
-                exec(function(res) {
-                    if (!res.connectionId) {
-                        me.Log('transaction.run DB connection error');
-                        throw new Error('Could not establish DB connection');
-                    }
+            exec(function(res) {
+                if (!res.connectionId) {
+                    me.Log('transaction.run DB connection error');
+                    throw new Error('Could not establish DB connection');
+                }
 
-                    //me.Log('transaction.run.connectionSuccess, res.connectionId: ' + res.connectionId);
-                    tx.connectionId = res.connectionId;
-                }, null, "WebSql", "connect", [me.name]);
-            } else {
-                tx.connectionId = parentTransaction.connectionId;
+                //me.Log('transaction.run.connectionSuccess, res.connectionId: ' + res.connectionId);
+                tx.connectionId = res.connectionId;
+            }, null, "WebSql", "connect", [me.name]);
+        } catch (e) {
+            if (onError) {
+                onError();
             }
+        }
 
-            tx.executeSql('SAVEPOINT trx' + tx.id);
-
-            if (preflight) {
-                preflight();
-            }
-
+        tx.executeSql('SAVEPOINT trx' + tx.id);
+        tx.addCallbackToQueue(function () {
             try {
                 cb(tx);
             } catch (cbEx) {
                 me.Log('Database.prototype.transaction callback error; lastTransactionId = ' + JSON.stringify(me.lastTransactionId) + '; err = ' + JSON.stringify(cbEx));
-                throw cbEx;
+                this.clearQueue();
             }
+        });
 
-            if (postflight) {
-                postflight();
-            }
-
+        tx.addCallbackToQueue(function () {
             tx.executeSql('RELEASE trx' + tx.id);
-        } catch (ex) {
-            me.Log('transaction.run callback error, lastTransactionId = ' + JSON.stringify(me.lastTransactionId) + '; error: ' + ex);
-
-            tx.executeSql('ROLLBACK TO trx' + tx.id);
-            tx.executeSql('RELEASE trx' + tx.id);
-            if (onError) {
-                onError(tx, ex);
+        }, true);
+        tx.addCallbackToQueue(function () {
+            exec(null, null, "WebSql", "disconnect", [tx.connectionId]);
+            if (onSuccess) {
+                onSuccess();
             }
-            return;
-        } finally {
-            if (isRoot) {
-                exec(null, null, "WebSql", "disconnect", [tx.connectionId]);
-            }
-        }
+        }, true);
 
-        if (onSuccess) {
-            onSuccess();
-        }
-    };
-
-    if (isRoot) {
-        setTimeout(runTransaction, 0);
-    } else {
-        runTransaction();
+        setTimeout(function () {
+            tx.executeNextItem();
+        }, 0)
     }
+
+    setTimeout(runTransaction, 0);
 };
 
-Database.prototype.readTransaction = function (cb, onError, onSuccess, preflight, postflight, parentTransaction) {
-    this.transaction(cb, onError, onSuccess, preflight, postflight, true, parentTransaction);
+Database.prototype.readTransaction = function (cb, onError, onSuccess) {
+    this.transaction(cb, onError, onSuccess, true);
 };
 
 module.exports = Database;

@@ -15,25 +15,12 @@ namespace SQLitePluginNative
 {
     public sealed class SQLiteProxy
     {
-
-        private static Dictionary<long, SQLiteConnection> _dbConnections = new Dictionary<long, SQLiteConnection>();
-
-        private static string getDbPath(string dbName)
-        {
-            string folder = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
-            return Path.Combine(folder, dbName);
-        }
-
         public static string Connect(string dbName)
         {
             var result = new ConnectionInfo();
             try
             {
-                var connection = new SQLite.SQLiteConnection(getDbPath(dbName));
-
-                var newId = _dbConnections.Keys.DefaultIfEmpty(0).Max() + 1;
-                _dbConnections.Add(newId, connection);
-                result.Id = newId;
+                result.Id = SQLiteConnectionManager.CreateConnection(dbName); ;
             }
             catch (Exception ex)
             {
@@ -47,9 +34,7 @@ namespace SQLitePluginNative
         {
             try
             {
-                var connection = _dbConnections[connectionId];
-                connection.Close();
-                _dbConnections.Remove(connectionId);
+                SQLiteConnectionManager.CloseConnection(connectionId);
             }
             catch (Exception ex)
             {
@@ -67,7 +52,7 @@ namespace SQLitePluginNative
                     var query = (string)args[0];
                     var queryParams = (object[])args[1];
 
-                    var connection = _dbConnections[connectionId];
+                    var connection = SQLiteConnectionManager.GetConnecionById(connectionId);
 
                     var cmd = connection.CreateCommand(query, queryParams);
                     List<Dictionary<string, object>> rows = cmd.ExecuteQuery<Dictionary<string, object>>();

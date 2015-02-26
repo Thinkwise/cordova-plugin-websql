@@ -48,6 +48,7 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SQLiteConnectionManager.cs" />
     <Compile Include="SQLiteProxy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLite\SQLiteException.cs" />
