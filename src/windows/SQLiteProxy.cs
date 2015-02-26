@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +8,8 @@ using System.Runtime.Serialization.Json;
 using System.IO;
 using System.Runtime.InteropServices.WindowsRuntime;
 using SQLitePluginNative.SQLite;
+using Windows.Foundation;
+using System.Threading.Tasks;
 
 namespace SQLitePluginNative
 {
@@ -56,41 +58,44 @@ namespace SQLitePluginNative
             return "{}";
         }
 
-        public static string executeSql(long connectionId, [ReadOnlyArray()] object[] args)
+        public static IAsyncOperation<string> executeSql(long connectionId, [ReadOnlyArray()] object[] args)
         {
-            try
+            return Task.Run<string>(() =>
             {
-                var query = (string)args[0];
-                var queryParams = (object[])args[1];
-
-                var connection = _dbConnections[connectionId];
-
-                var cmd = connection.CreateCommand(query, queryParams);
-                List<Dictionary<string, object>> rows = cmd.ExecuteQuery<Dictionary<string, object>>();
-
-                var resultSet = new SqlResultSet();
-                for (var i = 0; i < rows.Count; i++)
+                try
                 {
-                    resultSet.Rows.Add(ReadResultSetRow(rows[i]));
-                }
+                    var query = (string)args[0];
+                    var queryParams = (object[])args[1];
 
-                resultSet.RowsAffected = SQLite3.Changes(connection.Handle);
-                resultSet.InsertId = SQLite3.LastInsertRowid(connection.Handle);
-                return Serialize(typeof(SqlResultSet), resultSet);
-            }
-            catch (Exception ex)
-            {
-                // You can't access the original message text from JavaScript code.
-                // http://msdn.microsoft.com/en-US/library/windows/apps/br230301.aspx#ThrowingExceptions
-                // so we return it via custom object
-                return Serialize(typeof(InvocationError), new InvocationError(ex));
-            }
+                    var connection = _dbConnections[connectionId];
+
+                    var cmd = connection.CreateCommand(query, queryParams);
+                    List<Dictionary<string, object>> rows = cmd.ExecuteQuery<Dictionary<string, object>>();
+
+                    var resultSet = new SqlResultSet();
+                    for (var i = 0; i < rows.Count; i++)
+                    {
+                        resultSet.Rows.Add(ReadResultSetRow(rows[i]));
+                    }
+
+                    resultSet.RowsAffected = SQLite3.Changes(connection.Handle);
+                    resultSet.InsertId = SQLite3.LastInsertRowid(connection.Handle);
+                    return Serialize(typeof(SqlResultSet), resultSet);
+                }
+                catch (Exception ex)
+                {
+                    // You can't access the original message text from JavaScript code.
+                    // http://msdn.microsoft.com/en-US/library/windows/apps/br230301.aspx#ThrowingExceptions
+                    // so we return it via custom object
+                    return Serialize(typeof(InvocationError), new InvocationError(ex));
+                }
+            }).AsAsyncOperation();
         }
 
         private static QueryRow ReadResultSetRow(Dictionary<string, object> reader)
         {
             var row = new QueryRow();
-            foreach(var kv in reader)
+            foreach (var kv in reader)
             {
                 row.Add(new QueryColumn(kv.Key, kv.Value));
             }
