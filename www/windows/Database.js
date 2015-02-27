@@ -52,7 +52,18 @@ Database.prototype.transaction = function (cb, onError, onSuccess, readOnly) {
     this.lastTransactionId++;
 
     var runTransaction = function () {
-        var tx = new SqlTransaction(readOnly);
+        var tx = new SqlTransaction(readOnly, function (e) {
+            tx.clearQueue();
+            tx.clearInternalQueue();
+            tx.executeSql('ROLLBACK TO trx' + tx.id);
+            tx.executeSql('RELEASE trx' + tx.id);
+            tx.addCallbackToQueue(function () {
+                exec(null, null, "WebSql", "disconnect", [tx.connectionId]);
+            });
+            if (onError) {
+                onError(e);
+            }
+        });
         tx.id = me.lastTransactionId;
         try {
             exec(function(res) {

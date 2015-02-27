@@ -6,9 +6,10 @@ var exec = require('cordova/exec'),
     WRITE_OPS_REGEX = /^\s*(?:create|drop|delete|insert|update)\s/i;
 
 // http://www.w3.org/TR/webdatabase/#sqltransaction
-var SqlTransaction = function (readOnly) {
+var SqlTransaction = function (readOnly, onError) {
     this.readOnly = readOnly;
     //this.Log('ctor');
+    this.onError = onError;
     this.queue = [];
     this.internalQueue = [];
 };
@@ -17,6 +18,15 @@ SqlTransaction.prototype.clearQueue = function () {
 }
 SqlTransaction.prototype.clearInternalQueue = function () {
     this.internalQueue = [];
+}
+
+SqlTransaction.prototype.executeError = function (lastError) {
+    var onError = this.onError;
+    if (onError) {
+        // Clear error , to make sure we are not coming back here ever!
+        this.onError = null;
+        onError(lastError);
+    }
 }
 SqlTransaction.prototype.Log = function (text) {
     if (window.__webSqlDebugModeOn === true)
@@ -74,7 +84,7 @@ SqlTransaction.prototype.executeSqlInternal = function (sql, params, onSuccess, 
                 lastError = e;
                 if (rollbackRequired !== false) {
                     me.Log("Error occured while executing sql: " + sql + '. Error: ' + lastError);
-                    throw lastError;
+                    me.executeError(lastError);
                 }
             }
         }
@@ -93,7 +103,7 @@ SqlTransaction.prototype.executeSqlInternal = function (sql, params, onSuccess, 
         lastError = error;
         if (rollbackRequired !== false) {
             me.Log("Error occured while executing sql: " + sql + '. Error: ' + lastError);
-            throw lastError;
+            me.executeError(lastError);
         }
     };
     exec(function (res) {
