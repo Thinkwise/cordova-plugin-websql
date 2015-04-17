@@ -1,0 +1,27 @@
+{
+  "name": "cordova-plugin-websql-async",
+  "version": "1.0.0",
+  "description": "Web Sql Plugin for Apache Cordova (based on com.msopentech.websql)",
+  "cordova": {
+    "id": "cordova-plugin-websql-async",
+    "platforms": [
+      "windows"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Thinkwise/cordova-plugin-websql.git"
+  },
+  "keywords": [
+    "cordova",
+    "websql",
+    "ecosystem:cordova",
+    "cordova-windows8",
+    "cordova-windows",
+    "cordova-browser"
+  ],
+  "author": {
+    "name": "Thinkwise",
+    "url": "http://www.thinkwisesoftware.com"
+  }
+}
