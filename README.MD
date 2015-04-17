@@ -17,7 +17,7 @@ Add SDK references to the .Phone.jsproj:
   <When Condition="$(Platform) == 'x86'">
     <ItemGroup>
       <Reference Include="SQLitePluginNative">
-        <HintPath>..\..\plugins\com.thinkwisesoftware.websql\dist\x86\SQLitePluginNative.winmd</HintPath>
+        <HintPath>..\..\plugins\cordova-plugin-websql-async\dist\x86\SQLitePluginNative.winmd</HintPath>
         <IsWinMDFile>true</IsWinMDFile>
       </Reference>
     </ItemGroup>
@@ -25,7 +25,7 @@ Add SDK references to the .Phone.jsproj:
   <When Condition="$(Platform) == 'ARM'">
     <ItemGroup>
       <Reference Include="SQLitePluginNative">
-        <HintPath>..\..\plugins\com.thinkwisesoftware.websql\dist\ARM\SQLitePluginNative.winmd</HintPath>
+        <HintPath>..\..\plugins\cordova-plugin-websql-async\dist\ARM\SQLitePluginNative.winmd</HintPath>
         <IsWinMDFile>true</IsWinMDFile>
       </Reference>
     </ItemGroup>
@@ -37,7 +37,7 @@ Add the following to expand the SDKReferenceDirectoryRoot. Its important that th
 <!-- Last import element -->
 <PropertyGroup>
   <SDKReferenceDirectoryRoot>
-    ..\..\plugins\com.thinkwisesoftware.websql\src\windows\SDK\;$(SDKReferenceDirectoryRoot);
+    ..\..\plugins\cordova-plugin-websql-async\src\windows\SDK\;$(SDKReferenceDirectoryRoot);
   </SDKReferenceDirectoryRoot>
 </PropertyGroup>
 ```
