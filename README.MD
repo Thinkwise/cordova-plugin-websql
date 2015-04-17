@@ -1,48 +1,49 @@
-# Install guide
+# WebSQL plugin for Apache Cordova (Windows Phone)
+Enables WebSQL functionality on top of a Sqlite library. This repo is based on the [WebSQL plugin](https://github.com/MSOpenTech/cordova-plugin-websql) of MSOpenTech. This plugin however supports async execution of sql where the WebSQL plugin of MSOpenTech is completely sync.
 
-Manually add the following xml to the .phone.jsproj:
+## Usage
+This plugin is used with the IndexedDBShim which can be found [here](https://github.com/axemclion/IndexedDBShim). This basically provides an IndexedDb interface on top of the WebSql interface.
 
-Add the SDK near the rest of the references, it is possible to do this automatically with cordova but I want this only for the phone project.
-Also, because I want it to build as easy as possible the winmd files or on svn xD
-
-  <ItemGroup>
-    <SDKReference Include="Microsoft.VCLibs, Version=12.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <SDKReference Include="SQLite.WP81, Version=3.8.8.1" />
-  </ItemGroup>
-  <Choose>
-    <When Condition="$(Platform) == 'x86'">
-      <ItemGroup>
-        <Reference Include="SQLitePluginNative">
-          <HintPath>..\..\plugins\com.thinkwisesoftware.websql\dist\x86\SQLitePluginNative.winmd</HintPath>
-          <IsWinMDFile>true</IsWinMDFile>
-        </Reference>
-      </ItemGroup>
-    </When>
-    <When Condition="$(Platform) == 'ARM'">
-      <ItemGroup>
-        <Reference Include="SQLitePluginNative">
-          <HintPath>..\..\plugins\com.thinkwisesoftware.websql\dist\ARM\SQLitePluginNative.winmd</HintPath>
-          <IsWinMDFile>true</IsWinMDFile>
-        </Reference>
-      </ItemGroup>
-    </When>
-  </Choose>
-
-After that, add this to the jsproj:
-
-  <PropertyGroup>
-    <SDKReferenceDirectoryRoot>$(SolutionDir)..\..\plugins\com.thinkwisesoftware.websql\src\windows\SDK\;$(SDKReferenceDirectoryRoot);</SDKReferenceDirectoryRoot>
-  </PropertyGroup>
-
-It is important to do this right below the (last) import statement 
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
-
-
-# Build
-
-Note: the extra dashes are important because of a bug in cordova
-
-cordova build windows --archs="x86 arm" -- --phone 
+## Installation guide
+Add SDK references to the .Phone.jsproj:
+```xml
+<ItemGroup>
+  <SDKReference Include="Microsoft.VCLibs, Version=12.0" />
+</ItemGroup>
+<ItemGroup>
+  <SDKReference Include="SQLite.WP81, Version=3.8.8.1" />
+</ItemGroup>
+<Choose>
+  <When Condition="$(Platform) == 'x86'">
+    <ItemGroup>
+      <Reference Include="SQLitePluginNative">
+        <HintPath>..\..\plugins\com.thinkwisesoftware.websql\dist\x86\SQLitePluginNative.winmd</HintPath>
+        <IsWinMDFile>true</IsWinMDFile>
+      </Reference>
+    </ItemGroup>
+  </When>
+  <When Condition="$(Platform) == 'ARM'">
+    <ItemGroup>
+      <Reference Include="SQLitePluginNative">
+        <HintPath>..\..\plugins\com.thinkwisesoftware.websql\dist\ARM\SQLitePluginNative.winmd</HintPath>
+        <IsWinMDFile>true</IsWinMDFile>
+      </Reference>
+    </ItemGroup>
+  </When>
+</Choose>
+```
+Add the following to expand the SDKReferenceDirectoryRoot. Its important that the XML is added right after the last Import element.
+```xml
+<!-- Last import element -->
+<PropertyGroup>
+  <SDKReferenceDirectoryRoot>
+    ..\..\plugins\com.thinkwisesoftware.websql\src\windows\SDK\;$(SDKReferenceDirectoryRoot);
+  </SDKReferenceDirectoryRoot>
+</PropertyGroup>
+```
+## Build
+The Windows and Windows Phone should be build separately. Note that the extra dashes are needed because of a bug in Apache Cordova.
+```bash
+cordova build windows --archs="x86 arm" -- --phone
 cordova build windows -- --win
+```
