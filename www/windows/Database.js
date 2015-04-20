@@ -88,6 +88,9 @@ Database.prototype.transaction = function (cb, onError, onSuccess, readOnly) {
             } catch (cbEx) {
                 me.Log('Database.prototype.transaction callback error; lastTransactionId = ' + JSON.stringify(me.lastTransactionId) + '; err = ' + JSON.stringify(cbEx));
                 tx.clearQueue();
+                if (onError) {
+                    onError();
+                }
             }
         });
 
