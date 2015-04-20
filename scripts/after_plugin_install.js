@@ -89,6 +89,11 @@ function limitProjectConfigurations(xml) {
  * Adds references to SQLite to the Windows Phone project file
  */
 function addSQLiteReferences(xml) {
+    // Don't do anything if the references are already in the file
+    if (xml.indexOf('cordova-plugin-websql-async') !== -1) {
+        return;
+    }
+
     // Find the last <Import/> element in the project file
     var lastImportStart = xml.lastIndexOf('<Import ');
     var lastImportEnd = xml.indexOf('/>', lastImportStart);
