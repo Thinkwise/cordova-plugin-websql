@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-websql-async",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Web Sql Plugin for Apache Cordova (based on com.msopentech.websql)",
   "cordova": {
     "id": "cordova-plugin-websql-async",
