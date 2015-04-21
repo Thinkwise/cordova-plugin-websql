@@ -58,7 +58,7 @@ SqlTransaction.prototype.executeSqlInternal = function (sql, params, onSuccess, 
             return res.rows[index];
         };
         // process rows to be W3C spec compliant; TODO - this must be done inside native part for performance reasons
-        for (idxRow = 0; idxRow < res.rows.length; idxRow++) {
+        for (var idxRow = 0; idxRow < res.rows.length; idxRow++) {
             var originalRow = res.rows[idxRow],
                 refinedRow = {},
                 idxColumn;

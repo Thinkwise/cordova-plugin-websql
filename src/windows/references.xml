@@ -1,0 +1,29 @@
+  <ItemGroup>
+    <SDKReference Include="Microsoft.VCLibs, Version=12.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="SQLite.WP81, Version=3.8.8.1" />
+  </ItemGroup>
+  <Choose>
+    <When Condition="$(Platform) == 'x86'">
+      <ItemGroup>
+        <Reference Include="SQLitePluginNative">
+          <HintPath>..\..\plugins\cordova-plugin-websql-async\dist\x86\SQLitePluginNative.winmd</HintPath>
+          <IsWinMDFile>true</IsWinMDFile>
+        </Reference>
+      </ItemGroup>
+    </When>
+    <When Condition="$(Platform) == 'ARM'">
+      <ItemGroup>
+        <Reference Include="SQLitePluginNative">
+          <HintPath>..\..\plugins\cordova-plugin-websql-async\dist\ARM\SQLitePluginNative.winmd</HintPath>
+          <IsWinMDFile>true</IsWinMDFile>
+        </Reference>
+      </ItemGroup>
+    </When>
+  </Choose>
+  <PropertyGroup>
+    <SDKReferenceDirectoryRoot>
+      ..\..\plugins\cordova-plugin-websql-async\src\windows\SDK\;$(SDKReferenceDirectoryRoot);
+    </SDKReferenceDirectoryRoot>
+  </PropertyGroup>
