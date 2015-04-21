@@ -91,7 +91,7 @@ function limitProjectConfigurations(xml) {
 function addSQLiteReferences(xml) {
     // Don't do anything if the references are already in the file
     if (xml.indexOf('cordova-plugin-websql-async') !== -1) {
-        return;
+        return xml;
     }
 
     // Find the last <Import/> element in the project file
