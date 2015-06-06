@@ -1,3 +1,5 @@
+[![npm version](https://badge.fury.io/js/cordova-plugin-websql-async.svg)](http://badge.fury.io/js/cordova-plugin-websql-async)
+
 # WebSQL plugin for Apache Cordova (Windows Phone)
 Enables WebSQL functionality on top of a SQLite library. This repo is based on the [WebSQL plugin](https://github.com/MSOpenTech/cordova-plugin-websql) of MSOpenTech. This plugin however supports async execution of sql where the WebSQL plugin of MSOpenTech is completely sync.
 
