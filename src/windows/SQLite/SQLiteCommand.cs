@@ -11,7 +11,7 @@ using System.Collections;
 
 namespace SQLitePluginNative.SQLite
 {
-    public partial class SQLiteCommand
+    public sealed partial class SQLiteCommand
     {
         SQLiteConnection _conn;
         private List<Binding> _bindings;
