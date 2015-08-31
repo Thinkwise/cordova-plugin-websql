@@ -2,7 +2,7 @@
     <SDKReference Include="Microsoft.VCLibs, Version=12.0" />
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="SQLite.WP81, Version=3.8.8.1" />
+    <SDKReference Include="SQLite.WP81, Version=3.8.11.1" />
   </ItemGroup>
   <Choose>
     <When Condition="$(Platform) == 'x86'">
