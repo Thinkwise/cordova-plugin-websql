@@ -3,6 +3,8 @@ var path        = require('path'),
     pluginPath  = '',
     windowsPath = '';
 
+var CURRENT_VERSION = "3.8.11.1";
+
 /**
  * This script modifies the Windows Phone project to work with SQLite.
  */
@@ -89,8 +91,10 @@ function limitProjectConfigurations(xml) {
  * Adds references to SQLite to the Windows Phone project file
  */
 function addSQLiteReferences(xml) {
-    // Don't do anything if the references are already in the file
+    // Don't add the `references.xml` again the references are already in the file
     if (xml.indexOf('cordova-plugin-websql-async') !== -1) {
+        // Try to upgrade the version to the latest one
+        xml = xml.replace(/(<SDKReference Include="SQLite.WP81, Version=)\d+\.\d+\.\d+\.\d+(" \/>)/g, "$1" + CURRENT_VERSION + "$2")
         return xml;
     }
 
