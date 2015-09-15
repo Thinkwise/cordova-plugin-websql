@@ -13,7 +13,8 @@ module.exports = function(context) {
         pluginPath = context.opts.plugin.pluginInfo.dir;
         windowsPath = path.join(context.opts.projectRoot, 'platforms', 'windows');
         modifySolutionFile();
-        modifyProjectFile();
+        modifyProjectFileWindowsPhone();
+        modifyProjectFileWindows();
     }
     catch (e) {
         var err = new Error('An error occurred while adding SQLite to the Windows Phone project');
@@ -54,22 +55,34 @@ function limitSolutionConfigurations(sln) {
 /**
  * Modifies the Windows Phone project to work with SQLite.
  */
-function modifyProjectFile() {
+function modifyProjectFileWindowsPhone() {
     var projectFilePath = path.join(windowsPath, 'CordovaApp.Phone.jsproj');
     console.log('Adding SQLite to the Windows Phone project (%s)', projectFilePath);
 
     var xml = fs.readFileSync(projectFilePath, {encoding: 'utf8'});
-    xml = limitProjectConfigurations(xml);
-    xml = addSQLiteReferences(xml);
+    xml = limitProjectConfigurations(xml, 'configurations.xml');
+    xml = addSQLiteReferences(xml, 'references.xml', /(<SDKReference Include="SQLite.WP81, Version=)\d+\.\d+\.\d+\.\d+(" \/>)/g);
     fs.writeFileSync(projectFilePath, xml);
 }
 
+/**
+ * Modifies the Windows project to work with SQLite.
+ */
+function modifyProjectFileWindows() {
+    var projectFilePath = path.join(windowsPath, 'CordovaApp.Windows.jsproj');
+    console.log('Adding SQLite to the Windows project (%s)', projectFilePath);
+
+    var xml = fs.readFileSync(projectFilePath, {encoding: 'utf8'});
+    xml = limitProjectConfigurations(xml, 'configurations-Windows.xml');
+    xml = addSQLiteReferences(xml, 'references-Windows.xml', /(<SDKReference Include="SQLite.WinRT81, Version=)\d+\.\d+\.\d+\.\d+(" \/>)/g);
+    fs.writeFileSync(projectFilePath, xml);
+}
 
 /**
  * Limits the Windows Phone project's configurations to ARM and x86, 
  * which are the only ones supported by SQLite.
  */
-function limitProjectConfigurations(xml) {
+function limitProjectConfigurations(xml, configurationsXmlName) {
     // Find the ProjectConfigurations section in the project file
     var configsStartTag = '<ItemGroup Label="ProjectConfigurations">';
     var configsEndTag = '</ItemGroup>';
@@ -81,7 +94,7 @@ function limitProjectConfigurations(xml) {
     configsStart += configsStartTag.length;
 
     // Add project configurations
-    var configsPath = path.join(pluginPath, 'src', 'windows', 'configurations.xml');
+    var configsPath = path.join(pluginPath, 'src', 'windows', configurationsXmlName);
     var configs = fs.readFileSync(configsPath, {encoding: 'utf8'});
     return xml.substring(0, configsStart) + '\n' + configs + xml.substring(configsEnd);
 }
@@ -90,11 +103,11 @@ function limitProjectConfigurations(xml) {
 /**
  * Adds references to SQLite to the Windows Phone project file
  */
-function addSQLiteReferences(xml) {
+function addSQLiteReferences(xml, referenceFile, regex) {
     // Don't add the `references.xml` again the references are already in the file
     if (xml.indexOf('cordova-plugin-websql-async') !== -1) {
         // Try to upgrade the version to the latest one
-        xml = xml.replace(/(<SDKReference Include="SQLite.WP81, Version=)\d+\.\d+\.\d+\.\d+(" \/>)/g, "$1" + CURRENT_VERSION + "$2")
+        xml = xml.replace(regex, "$1" + CURRENT_VERSION + "$2")
         return xml;
     }
 
@@ -107,7 +120,7 @@ function addSQLiteReferences(xml) {
     lastImportEnd += 2;
 
     // Add SQLite references
-    var referencesPath = path.join(pluginPath, 'src', 'windows', 'references.xml');
+    var referencesPath = path.join(pluginPath, 'src', 'windows', referenceFile);
     var references = fs.readFileSync(referencesPath, {encoding: 'utf8'});
     return xml.substring(0, lastImportEnd) + '\n' + references + xml.substring(lastImportEnd);
 }
