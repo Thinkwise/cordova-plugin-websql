@@ -21,6 +21,14 @@
         </Reference>
       </ItemGroup>
     </When>
+    <When Condition="$(Platform) == 'ARM'">
+      <ItemGroup>
+        <Reference Include="SQLitePluginNative">
+          <HintPath>..\..\plugins\cordova-plugin-websql-async\dist\windows-arm\SQLitePluginNative.winmd</HintPath>
+          <IsWinMDFile>true</IsWinMDFile>
+        </Reference>
+      </ItemGroup>
+    </When>
   </Choose>
   <PropertyGroup>
     <SDKReferenceDirectoryRoot>
