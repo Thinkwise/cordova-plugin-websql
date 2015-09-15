@@ -12,7 +12,7 @@
         <hook type="after_plugin_install" src="scripts/after_plugin_install.js"/>
 
         <js-module src="www/WebSQL.js" name="WebSQL">
-            <clobbers target="window.WebSQL" />
+            <clobbers target="window" />
         </js-module>
         <js-module src="www/windows/Database.js" name="Database" />
         <js-module src="www/windows/SqlTransaction.js" name="SqlTransaction" />
